@@ -1,0 +1,95 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "build": {
+    "beforeDevCommand": "pnpm run dev",
+    "devPath": "http://localhost:1176",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "scheduled_shutdown",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "notification": {
+        "all": true
+      },
+      "os": {
+        "all": true
+      },
+      "shell": {
+        "all": false,
+        "execute": true,
+        "open": false,
+        "scope": [
+          {
+            "name": "shutdown",
+            "cmd": "shutdown",
+            "args": true
+          },
+          {
+            "name": "systemctl",
+            "cmd": "systemctl",
+            "args": true
+          }
+        ],
+        "sidecar": false
+      }
+    },
+    "bundle": {
+      "active": true,
+      "category": "Utility",
+      "copyright": "https://github.com/yyrjlw",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "identifier": "com.github.yyrjlw",
+      "longDescription": "",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": "zh-CN"
+        },
+        "nsis": {
+          "installMode": "both"
+        }
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "center": true,
+        "height": 530,
+        "resizable": false,
+        "title": "定时关机小工具",
+        "width": 490,
+        "theme": "Dark"
+      }
+    ]
+  }
+}
