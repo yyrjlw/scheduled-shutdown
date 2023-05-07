@@ -71,7 +71,8 @@
           "language": "zh-CN"
         },
         "nsis": {
-          "installMode": "both"
+          "installMode": "both",
+          "languages": ["SimpChinese", "TradChinese"]
         }
       }
     },
