@@ -6,8 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "scheduled_shutdown",
-    "version": "0.1.0"
+    "productName": "scheduled-shutdown"
   },
   "tauri": {
     "allowlist": {
@@ -72,7 +71,7 @@
         },
         "nsis": {
           "installMode": "both",
-          "languages": ["SimpChinese", "TradChinese"]
+          "languages": ["SimpChinese"]
         }
       }
     },
