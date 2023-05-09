@@ -8,7 +8,7 @@ export class Darwin implements IDriver {
   async restart() {
     await new Command('shutdown', ['-r', 'now']).execute()
   }
-  async hibernate() {
+  async sleep() {
     await new Command('shutdown', ['-s', 'now']).execute()
   }
 }

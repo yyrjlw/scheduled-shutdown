@@ -25,11 +25,6 @@
             "name": "shutdown",
             "cmd": "shutdown",
             "args": true
-          },
-          {
-            "name": "systemctl",
-            "cmd": "systemctl",
-            "args": true
           }
         ],
         "sidecar": false
