@@ -115,24 +115,40 @@ const action = ref<shutdownModal>('shutdown')
 const selectOptionsForAction = [
   {
     label: '关机',
-    value: 'shutdown'
-  },
-  {
-    label: '睡眠',
-    value: 'sleep'
+    value: 'shutdown',
+    disabled: false
   },
   {
     label: '重启',
-    value: 'restart'
+    value: 'restart',
+    disabled: false
+  },
+  {
+    label: '睡眠',
+    value: 'sleep',
+    disabled: false
   },
   {
     label: '休眠',
-    value: 'hibernate'
+    value: 'hibernate',
+    disabled: false
   }
-] as { value: shutdownModal; label: string; disabled?: boolean }[]
+] as { value: shutdownModal; label: string; disabled: boolean }[]
 type().then((osType) => {
-  if (osType === 'Darwin' || osType === 'Windows_NT') {
-    selectOptionsForAction[1].disabled = true
+  switch (osType) {
+    case 'Windows_NT':
+      selectOptionsForAction.find((i) => i.value === 'sleep')!.disabled = true
+      break
+    case 'Linux':
+      selectOptionsForAction.find((i) => i.value === 'sleep')!.disabled = true
+      selectOptionsForAction.find((i) => i.value === 'hibernate')!.disabled = true
+      break
+    case 'Darwin':
+      selectOptionsForAction.find((i) => i.value === 'hibernate')!.disabled = true
+      break
+
+    default:
+      break
   }
 })
 //#endregion
@@ -201,6 +217,7 @@ const toggleCountDownStatus = (() => {
       }
       if (
         model.value === 1 &&
+        !import.meta.env.DEV &&
         targetCountDown.value.hours === 0 &&
         targetCountDown.value.minutes === 0
       ) {
