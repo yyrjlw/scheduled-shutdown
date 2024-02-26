@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "scheduled_shutdown",
-    "version": "0.1.0"
+    "productName": "定时关机小工具",
+    "version": "2.1.0"
   },
   "tauri": {
     "allowlist": {
