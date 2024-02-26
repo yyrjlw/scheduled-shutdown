@@ -99,6 +99,7 @@ import { notification } from '@/utils/tauri-util'
 import { type } from '@tauri-apps/api/os'
 import type { shutdownModal } from '@/libs/drivers'
 import { shutdown } from '@/utils/os-util'
+import type { WorkerEventType } from '@/webworker'
 
 const { message } = createDiscreteApi(['message'])
 
@@ -172,78 +173,90 @@ const progressStatus = computed(() => {
   }
 })
 const showColon = computed(() => countDown.value % 2 != 0)
+
+const worker = new Worker(new URL('@/webworker.ts', import.meta.url))
 /**倒计时 */
 const countDown = ref(0)
 /**倒计时的初始值(用于进度条的计算) */
 let countDownInitialValue = 0
+let isStarted = false
+
+worker.onmessage = function (e: MessageEvent<WorkerEventType>) {
+  switch (e.data) {
+    case 'interval:tick':
+      startCounting()
+      break
+
+    default:
+      break
+  }
+}
+
+function startCounting() {
+  if (countDown.value > 0) {
+    countDown.value--
+    if (countDown.value === 60) {
+      notification({
+        title: '定时关机小工具',
+        body: `温馨提示：离自动${
+          selectOptionsForAction.find((i) => i.value === action.value)!.label
+        }还剩一分钟`
+      })
+    }
+  } else {
+    stopCountdown()
+    shutdown(action.value)
+  }
+}
+
+/**停止倒计时 */
+const stopCountdown = () => {
+  countDown.value = 0
+  countDownInitialValue = 0
+  worker.postMessage('stop')
+  isStarted = false
+}
 
 /**开始倒计时 */
-const toggleCountDownStatus = (() => {
-  let isStarted = false
-  let interVal = 0
-  /**停止倒计时 */
-  const stopCountdown = () => {
-    countDown.value = 0
-    countDownInitialValue = 0
-    clearInterval(interVal)
-    isStarted = false
-  }
-
-  return () => {
-    if (isStarted) {
-      stopCountdown()
-    } else {
-      //#region 判断选择的时间是否合法
-      if (model.value === 0 && dayjs(targetTime.value).isBefore(new Date())) {
-        message.info('难道你还想回到过去吗?')
-        datePickerStatus.value = 'error'
-        return
-      }
-      if (
-        model.value === 1 &&
-        targetCountDown.value.hours === 0 &&
-        targetCountDown.value.minutes === 0
-      ) {
-        message.info('相信我，直接拔掉电源，关机会更快！！！')
-        return
-      }
-      //#endregion
-
-      isStarted = true
-
-      //#region 变量初始化
-      const now = dayjs()
-      if (model.value === 0) {
-        countDown.value = dayjs(targetTime.value - now.valueOf()).unix()
-      } else {
-        const target = dayjs()
-          .add(targetCountDown.value.hours, 'hour')
-          .add(targetCountDown.value.minutes, 'minute')
-        countDown.value = dayjs(target.valueOf() - now.valueOf()).unix()
-      }
-      countDownInitialValue = countDown.value
-      //#endregion
-
-      //开始倒计时
-      interVal = setInterval(() => {
-        if (countDown.value > 0) {
-          countDown.value--
-          if (countDown.value === 60) {
-            notification({
-              title: '定时关机小工具',
-              body: `温馨提示：离自动${
-                selectOptionsForAction.find((i) => i.value === action.value)!.label
-              }还剩一分钟`
-            })
-          }
-        } else {
-          stopCountdown()
-          shutdown(action.value)
-        }
-      }, 1000)
+const toggleCountDownStatus = () => {
+  if (isStarted) {
+    stopCountdown()
+  } else {
+    //#region 判断选择的时间是否合法
+    if (model.value === 0 && dayjs(targetTime.value).isBefore(new Date())) {
+      message.info('难道你还想回到过去吗?')
+      datePickerStatus.value = 'error'
+      return
     }
+    if (
+      model.value === 1 &&
+      targetCountDown.value.hours === 0 &&
+      targetCountDown.value.minutes === 0
+    ) {
+      message.info('相信我，直接拔掉电源，关机会更快！！！')
+      return
+    }
+    //#endregion
+
+    isStarted = true
+
+    //#region 变量初始化
+    const now = dayjs()
+    if (model.value === 0) {
+      countDown.value = dayjs(targetTime.value - now.valueOf()).unix()
+    } else {
+      const target = dayjs()
+        .add(targetCountDown.value.hours, 'hour')
+        .add(targetCountDown.value.minutes, 'minute')
+      countDown.value = dayjs(target.valueOf() - now.valueOf()).unix()
+    }
+    countDownInitialValue = countDown.value
+    //#endregion
+
+    //开始倒计时
+    worker.postMessage('start')
   }
-})()
+}
 </script>
 
 <style lang="scss" scoped>
