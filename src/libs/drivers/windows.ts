@@ -3,13 +3,13 @@ import { Command } from '@tauri-apps/api/shell'
 
 export class Windows implements IDriver {
   async shutdown() {
-    await new Command('shutdown', ['/p']).execute()
+    await new Command('shutdown', ['/p', '/f']).execute()
   }
   async restart() {
-    await new Command('shutdown', ['/r', '-t 0']).execute()
+    await new Command('shutdown', ['/r', '/t', '0']).execute()
   }
   async hibernate() {
-    await new Command('shutdown', ['/h', '/f']).execute()
+    await new Command('shutdown', ['/h']).execute()
   }
 }
 

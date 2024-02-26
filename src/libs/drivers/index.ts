@@ -7,7 +7,7 @@ export interface IDriver {
   shutdown(): Promise<void>
   restart(): Promise<void>
   sleep?(): Promise<void>
-  hibernate(): Promise<void>
+  hibernate?(): Promise<void>
 }
 
 export type shutdownModal = keyof Pick<IDriver, 'hibernate' | 'restart' | 'shutdown' | 'sleep'>

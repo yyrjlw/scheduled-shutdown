@@ -26,11 +26,6 @@
             "name": "shutdown",
             "cmd": "shutdown",
             "args": true
-          },
-          {
-            "name": "systemctl",
-            "cmd": "systemctl",
-            "args": true
           }
         ],
         "sidecar": false
@@ -72,7 +67,7 @@
         },
         "nsis": {
           "installMode": "both",
-          "languages": ["SimpChinese", "TradChinese"]
+          "languages": ["SimpChinese"]
         }
       }
     },
